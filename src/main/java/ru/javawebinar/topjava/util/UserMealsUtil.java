@@ -23,16 +23,28 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-
         List<UserMealWithExceed> exceedList = new ArrayList<>();
+
+        Map<LocalDate, Integer> maps = new HashMap<>();
+        for(int i = 0; i < mealList.size(); i++) {
+            maps.merge(mealList.get(i).getDateTime().toLocalDate(), mealList.get(i).getCalories(), (val1, val2) -> val1 + val2);
+        }
+        for(UserMeal userM : mealList) {
+            if(userM.getDateTime().toLocalTime().isAfter(startTime) && userM.getDateTime().toLocalTime().isBefore(endTime))
+                exceedList.add(new UserMealWithExceed(userM.getDateTime(), userM.getDescription(), userM.getCalories(), maps.get(userM.getDateTime().toLocalDate()) > caloriesPerDay));
+        }
+
+       /**
         Map<LocalDate, List<UserMeal>> map = mealList.stream().sorted(Comparator.comparing(UserMeal::getDateTime)).collect(Collectors.groupingBy((p) -> p.getDateTime().toLocalDate()));
         for(Map.Entry entry: map.entrySet()) {
             List<UserMeal> mealListForEveryDate = (List<UserMeal>)entry.getValue();
             int caloriesThisDay = mealListForEveryDate.stream().mapToInt((p) -> p.getCalories()).sum();
             exceedList.addAll(mealListForEveryDate.stream().filter(p -> p.getDateTime().toLocalTime().isAfter(startTime) && p.getDateTime().toLocalTime().isBefore(endTime)).
-                    map((p) -> new UserMealWithExceed(p.getDateTime(), p.getDescription(), p.getCalories(), (caloriesThisDay <= caloriesPerDay))).collect(Collectors.toList()));
+                    map((p) -> new UserMealWithExceed(p.getDateTime(), p.getDescription(), p.getCalories(), (caloriesThisDay > caloriesPerDay))).collect(Collectors.toList()));
         }
-
+*/
+       for(UserMealWithExceed user : exceedList)
+        System.out.println(user);
         return exceedList;
     }
 }
