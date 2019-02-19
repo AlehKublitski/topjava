@@ -16,24 +16,58 @@
         }
     </style>
 </head>
-<body>
+<body bgcolor="#dcdcdc">
 <section>
     <h3><a href="index.html">Home</a></h3>
-    <h2>Meals</h2>
-    <a href="meals?action=create">Add Meal</a>
+    <h2 align="center">Моя еда</h2>
+    <form action="meals" method="post">
+        <input type="hidden" name="action" value="filter">
+        <table align="center" bgcolor="#f0ffff">
+            <tr>
+                <th width="150" align="left">От даты</th>
+                <th width="150" align="left">До даты</th>
+                <th width="150">&nbsp;</th>
+                <th width="150" align="left">От времени</th>
+                <th width="150" align="left">До времени</th>
+            </tr>
+            <tr>
+                <td><input type="date" name="startDate" value="${startDate}"></td>
+                <td><input type="date" name="endDate" value="${endDate}"></td>
+                <td></td>
+                <td><input type="time" name="startTime" value="${startTime}"></td>
+                <td><input type="time" name="endTime" value="${endTime}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="submit" style="color: #FFFFFF; background-color: blue">ОТФИЛЬТРОВАТЬ</button>
+                </td>
+                <td>
+                    <button type="button" style="background-color: red"><a href="meals" style="color: #FFFFFF"/>ОТМЕНА
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </form>
     <hr/>
-    <table border="1" cellpadding="8" cellspacing="0">
+    <button type="submit"
+            style="margin-left:250px; margin-bottom:10px; width: 120px; height: 35px; vertical-align: center; background-color:#5555FF; font-size: 15px; font-style: italic">
+        <a href="meals?action=create" style="color: #FFFFFF">Добавить</a></button>
+
+    <table border="1" cellpadding="8" cellspacing="0" bgcolor="#cccccc" align="center">
         <thead>
         <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Calories</th>
-            <th></th>
-            <th></th>
+            <th width="150">Date</th>
+            <th width="150">Description</th>
+            <th width="150">Calories</th>
+            <th width="150">&nbsp;</th>
+            <th width="150">&nbsp;</th>
         </tr>
         </thead>
         <c:forEach items="${meals}" var="meal">
-            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
