@@ -23,18 +23,51 @@ public class MealRestController {
 
     @Autowired
     private MealService service;
+    public static boolean isFiltred = false;
+    public static LocalDate startDateLocal = LocalDate.MIN;
+    public static LocalDate endDateLocal = LocalDate.MAX;
+    private static LocalTime startTimeLocal = LocalTime.MIN;
+    private static LocalTime endTimeLocal = LocalTime.MAX;
+
+    public static LocalDate getStartDateLocal() {
+        //if(startDateLocal.equals(LocalDate.MIN)) return "";
+        return startDateLocal;
+    }
+
+    public static LocalDate getEndDateLocal() {
+        return endDateLocal;
+    }
+
+    public static LocalTime getStartTimeLocal() {
+        return startTimeLocal;
+    }
+
+    public static LocalTime getEndTimeLocal() {
+        return endTimeLocal;
+    }
 
     public List<MealTo> getAll() {
         log.info("getAll");
         return MealsUtil.getWithExcess(service.getAll(authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<MealTo> getFiltred(String startTime, String endTime, String startDate, String endDate) {
-        LocalTime startTimeL = startTime.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTime);
-        LocalTime endTimeL = endTime.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTime);
-        LocalDate startDateL = startDate.isEmpty() ? LocalDate.MIN : LocalDate.parse(startDate);
-        LocalDate endDateL = endDate.isEmpty() ? LocalDate.MAX : LocalDate.parse(endDate);
-        return MealsUtil.getFilteredWithExcess(service.getAll(authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY, startTimeL, endTimeL, startDateL, endDateL);
+    public List<MealTo> getFiltred() {
+        return MealsUtil.getFilteredWithExcess(service.getAll(authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY, startTimeLocal, endTimeLocal, startDateLocal, endDateLocal);
+    }
+
+    public void filtred(String startTime, String endTime, String startDate, String endDate) {
+        if (startTime != null && !startTime.isEmpty()) startTimeLocal = LocalTime.parse(startTime);
+        if (endTime != null && !endTime.isEmpty()) endTimeLocal = LocalTime.parse(endTime);
+        if (startDate != null && !startDate.isEmpty()) startDateLocal = LocalDate.parse(startDate);
+        if (endDate != null && !endDate.isEmpty()) endDateLocal = LocalDate.parse(endDate);
+        isFiltred = true;
+    }
+
+    public void noFiltred() {
+        startDateLocal = LocalDate.MIN;
+        endDateLocal = LocalDate.MAX;
+        startTimeLocal = LocalTime.MIN;
+        endTimeLocal = LocalTime.MAX;
     }
 
     public Meal get(int id) {

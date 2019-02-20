@@ -47,11 +47,12 @@ public class MealServlet extends HttpServlet {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
             log.info("Filtred day from {} to {} and time from {} to {}", startDate, endDate, startTime, endTime);
-            request.setAttribute("meals", controller.getFiltred(startTime, endTime, startDate, endDate));
-            request.setAttribute("startTime", startTime);
-            request.setAttribute("endTime", endTime);
-            request.setAttribute("startDate", startDate);
-            request.setAttribute("endDate", endDate);
+            controller.filtred(startTime, endTime, startDate, endDate);
+            request.setAttribute("meals", controller.getFiltred());
+            request.setAttribute("startTime", controller.getStartTimeLocal());
+            request.setAttribute("endTime", controller.getEndTimeLocal());
+            request.setAttribute("startDate", controller.getStartDateLocal());
+            request.setAttribute("endDate", controller.getEndDateLocal());
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else {
             String id = request.getParameter("id");
@@ -63,7 +64,14 @@ public class MealServlet extends HttpServlet {
             log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
             if (meal.isNew()) controller.create(meal);
             else controller.update(meal, meal.getId());
-            response.sendRedirect("meals");
+            request.setAttribute("meals", controller.getFiltred());
+            if (controller.isFiltred) {
+                request.setAttribute("startTime", controller.getStartTimeLocal());
+                request.setAttribute("endTime", controller.getEndTimeLocal());
+                request.setAttribute("startDate", controller.getStartDateLocal());
+                request.setAttribute("endDate", controller.getEndDateLocal());
+            }
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
     }
 
@@ -75,7 +83,14 @@ public class MealServlet extends HttpServlet {
                 int id = getId(request);
                 log.info("Delete {}", id);
                 controller.delete(id);
-                response.sendRedirect("meals");
+                request.setAttribute("meals", controller.getFiltred());
+                if (controller.isFiltred) {
+                    request.setAttribute("startTime", controller.getStartTimeLocal());
+                    request.setAttribute("endTime", controller.getEndTimeLocal());
+                    request.setAttribute("startDate", controller.getStartDateLocal());
+                    request.setAttribute("endDate", controller.getEndDateLocal());
+                }
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "create":
             case "update":
@@ -88,6 +103,7 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
+                controller.noFiltred();
                 request.setAttribute("meals", controller.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
