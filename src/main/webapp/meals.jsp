@@ -20,7 +20,7 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2 align="center">Моя еда</h2>
-    <form action="meals" method="post">
+    <form action="meals" method="get">
         <input type="hidden" name="action" value="filter">
         <table align="center" bgcolor="#f0ffff">
             <tr>
@@ -31,11 +31,11 @@
                 <th width="150" align="left">До времени</th>
             </tr>
             <tr>
-                <td><input type="date" name="startDate" value="${startDate}"></td>
-                <td><input type="date" name="endDate" value="${endDate}"></td>
+                <td><input type="date" name="startDate" value="${param.startDate}"></td>
+                <td><input type="date" name="endDate" value="${param.endDate}"></td>
                 <td></td>
-                <td><input type="time" name="startTime" value="${startTime}"></td>
-                <td><input type="time" name="endTime" value="${endTime}"></td>
+                <td><input type="time" name="startTime" value="${param.startTime}"></td>
+                <td><input type="time" name="endTime" value="${param.endTime}"></td>
             </tr>
             <tr>
                 <td></td>
