@@ -1,9 +1,17 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -13,7 +21,12 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -30,8 +43,39 @@ public class MealServiceTest {
         SLF4JBridgeHandler.install();
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(" ");
+    private static Map<String, Long> map = new HashMap<>();
+
+    private static void logInfo(Description description, long nanos) {
+        String testName = description.getMethodName();
+        map.put(testName, nanos);
+        logger.info(String.format("Test %s, spent %d microseconds",
+                testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
+    }
+
     @Autowired
     private MealService service;
+
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+
+        @Override
+        protected void finished(long nanos, Description description) {
+            logInfo(description, nanos);
+        }
+    };
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+
+    @AfterClass
+    public static void afterClass() {
+        for (Map.Entry<String, Long> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        map.clear();
+    }
 
     @Test
     public void delete() throws Exception {
@@ -39,8 +83,9 @@ public class MealServiceTest {
         assertMatch(service.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(MEAL1_ID, 1);
     }
 
@@ -59,8 +104,9 @@ public class MealServiceTest {
         assertMatch(actual, ADMIN_MEAL1);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -71,9 +117,12 @@ public class MealServiceTest {
         assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void updateNotFound() throws Exception {
-        service.update(MEAL1, ADMIN_ID);
+        thrown.expect(NotFoundException.class);
+        Meal meal = service.get(MEAL1_ID, USER_ID);
+        meal.setDescription("oooooooooppppppp");
+        service.update(meal, ADMIN_ID);
     }
 
     @Test
@@ -83,8 +132,17 @@ public class MealServiceTest {
 
     @Test
     public void getBetween() throws Exception {
+        List<Meal> list = service.getBetweenDates(
+                LocalDate.of(2015, Month.MAY, 30),
+                LocalDate.of(2015, Month.MAY, 30), USER_ID);
+        if (list == null) System.out.println("Ничего не получили");
         assertMatch(service.getBetweenDates(
                 LocalDate.of(2015, Month.MAY, 30),
                 LocalDate.of(2015, Month.MAY, 30), USER_ID), MEAL3, MEAL2, MEAL1);
+    }
+
+    @Test(expected = DataAccessException.class)
+    public void duplicateDateCreate() throws Exception {
+        service.create(new Meal(of(2015, Month.MAY, 30, 10, 0), "Дубликат", 500), USER_ID);
     }
 }
