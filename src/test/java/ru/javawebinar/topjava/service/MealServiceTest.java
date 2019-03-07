@@ -28,8 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -120,9 +119,7 @@ public class MealServiceTest {
     @Test
     public void updateNotFound() throws Exception {
         thrown.expect(NotFoundException.class);
-        Meal meal = service.get(MEAL1_ID, USER_ID);
-        meal.setDescription("oooooooooppppppp");
-        service.update(meal, ADMIN_ID);
+        service.update(MEAL1,ADMIN_ID);
     }
 
     @Test
