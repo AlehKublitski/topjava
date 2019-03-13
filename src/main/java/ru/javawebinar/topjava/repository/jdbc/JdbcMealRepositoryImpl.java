@@ -16,15 +16,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public class JdbcMealRepositoryImpl implements MealRepository {
+public abstract class JdbcMealRepositoryImpl implements MealRepository {
 
-    private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
+    protected static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
-    private final JdbcTemplate jdbcTemplate;
+    protected final JdbcTemplate jdbcTemplate;
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private final SimpleJdbcInsert insertMeal;
+    protected final SimpleJdbcInsert insertMeal;
 
     @Autowired
     public JdbcMealRepositoryImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -34,6 +34,7 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        System.out.println("Инициализируется абстрактный репозиторий " + this.getClass().getSimpleName());
     }
 
     @Override
