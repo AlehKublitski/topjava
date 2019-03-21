@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class JdbcUserRepositoryImpl implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+    private static final SingleColumnRowMapper<Role> ROW_MAPPER1 = new SingleColumnRowMapper<Role>();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -56,7 +59,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        List<User> users = jdbcTemplate.query("SELECT * FROM users  WHERE id=?", ROW_MAPPER, id);
         return DataAccessUtils.singleResult(users);
     }
 
@@ -70,5 +73,19 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+    }
+
+    @Override
+    public User getWithRoles(int id) {
+        List<User> users = jdbcTemplate.query("SELECT *, r.role as roles FROM users u INNER JOIN user_roles r ON r.user_id=u.id WHERE u.id=?", ROW_MAPPER, id);
+        if (users.size() == 1) return DataAccessUtils.singleResult(users);
+        User user = users.get(0);
+        for (int i = 1; i < users.size(); i++) user.getRoles().addAll(users.get(i).getRoles());
+
+      /*  List<User> users = jdbcTemplate.query("SELECT * FROM users  WHERE id=?", ROW_MAPPER, id);
+        User user = DataAccessUtils.singleResult(users);
+        List<Role> roles = jdbcTemplate.queryForList("SELECT r.role FROM  user_roles r WHERE user_id=?", Role.class, id);
+        user.setRoles(roles);*/
+        return user;
     }
 }

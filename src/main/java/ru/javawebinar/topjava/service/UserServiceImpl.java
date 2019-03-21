@@ -65,4 +65,9 @@ public class UserServiceImpl implements UserService {
     public User getWithMeals(int id) {
         return checkNotFoundWithId(repository.getWithMeals(id), id);
     }
+
+    @Override
+    public User getWithRoles(int id) {
+        return repository.getWithRoles(id);
+    }
 }
