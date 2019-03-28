@@ -33,7 +33,7 @@
         <button type="submit">Filter</button>
     </form>
     <hr/>
-    <a href="<c:url value='/create'/>"><spring:message code="meal.add"/></a>
+    <a href="<c:url value='/create/'/>"><spring:message code="meal.add"/></a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>

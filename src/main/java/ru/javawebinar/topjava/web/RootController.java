@@ -14,6 +14,10 @@ public class RootController {
     @Autowired
     private UserService service;
 
+    public RootController() {
+        System.out.println("Контроллер поехал !!!!!!!!!!!!!!!!!!!!!!!!!");
+    }
+
     @GetMapping("/")
     public String root() {
         return "index";

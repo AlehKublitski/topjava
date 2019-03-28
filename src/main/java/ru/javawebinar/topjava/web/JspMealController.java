@@ -52,7 +52,7 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/create/")
     public String create(Model model) {
         int userId = SecurityUtil.authUserId();
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
@@ -61,7 +61,7 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @PostMapping("/meals")
+    @PostMapping("/create/meals")
     public String createMeal(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
         int userId = SecurityUtil.authUserId();

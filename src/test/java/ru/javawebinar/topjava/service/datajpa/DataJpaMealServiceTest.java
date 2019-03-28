@@ -18,6 +18,10 @@ public class DataJpaMealServiceTest extends AbstractMealServiceTest {
         Meal adminMeal = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
         assertMatch(adminMeal, ADMIN_MEAL1);
         UserTestData.assertMatch(adminMeal.getUser(), UserTestData.ADMIN);
+        System.out.println("Повторная попытка !!!!!!!!!!!!!!!!!!!!!!!!!!");
+        adminMeal = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
+        assertMatch(adminMeal, ADMIN_MEAL1);
+        UserTestData.assertMatch(adminMeal.getUser(), UserTestData.ADMIN);
     }
 
     @Test(expected = NotFoundException.class)

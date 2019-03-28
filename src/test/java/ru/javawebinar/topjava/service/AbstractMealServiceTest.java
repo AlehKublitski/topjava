@@ -1,9 +1,12 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -19,6 +22,20 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected MealService service;
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    @Autowired(required = false)
+    protected JpaUtil jpaUtil;
+
+    @Before
+    public void setUp() throws Exception {
+        cacheManager.getCache("meals").clear();
+        if (!this.getClass().getSimpleName().toLowerCase().contains("jdbc")) {
+            jpaUtil.clear2ndLevelHibernateCache();
+        }
+    }
 
     @Test
     public void delete() throws Exception {
@@ -44,6 +61,9 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Test
     public void get() throws Exception {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
+        assertMatch(actual, ADMIN_MEAL1);
+        System.out.println("Попытка № 2 вызвать get ____________!!!!!!!!");
+        actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
         assertMatch(actual, ADMIN_MEAL1);
     }
 
