@@ -12,6 +12,7 @@ public class JsonUtil {
 
     public static <T> List<T> readValues(String json, Class<T> clazz) {
         ObjectReader reader = getMapper().readerFor(clazz);
+        System.out.println("Начинаем метод List<> readValues() читаем для класса: " + clazz.getSimpleName() + " сам джейсон текст " + json);
         try {
             return reader.<T>readValues(json).readAll();
         } catch (IOException e) {
@@ -20,6 +21,7 @@ public class JsonUtil {
     }
 
     public static <T> T readValue(String json, Class<T> clazz) {
+        System.out.println("Начинаем метод <> readValue() читаем для класса: " + clazz.getSimpleName() + " сам джейсон текст " + json);
         try {
             return getMapper().readValue(json, clazz);
         } catch (IOException e) {

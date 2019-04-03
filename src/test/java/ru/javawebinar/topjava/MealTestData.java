@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava;
 
+import org.springframework.test.web.servlet.ResultMatcher;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.Month;
 import java.util.Arrays;
@@ -8,6 +10,8 @@ import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.javawebinar.topjava.TestUtil.readFromJsonMvcResult;
+import static ru.javawebinar.topjava.TestUtil.readListFromJsonMvcResult;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
@@ -44,4 +48,38 @@ public class MealTestData {
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
     }
+
+    public static ResultMatcher contentJson(Meal... expected) {
+        return result -> assertMatch(readListFromJsonMvcResult(result, Meal.class), Arrays.asList(expected));
+    }
+
+    public static ResultMatcher contentJson(Meal expected) {
+        return result -> assertMatch(readFromJsonMvcResult(result, Meal.class), expected);
+    }
+
+    public static ResultMatcher contentJson(MealTo expected) {
+        return result -> assertMatchTo(readFromJsonMvcResult(result, expected.getClass()), expected);
+    }
+
+    public static ResultMatcher contentJson(MealTo... expected) {
+        return result -> assertMatchTo(readListFromJsonMvcResult(result, MealTo.class), Arrays.asList(expected));
+    }
+
+    public static ResultMatcher contentJson(Iterable<MealTo> expected) {
+        return result -> assertMatchTo(readListFromJsonMvcResult(result, MealTo.class), expected);
+    }
+
+    public static void assertMatchTo(MealTo actual, MealTo expected) {
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
+    }
+
+    public static void assertMatchTo(Iterable<MealTo> actual, MealTo... expected) {
+        assertMatchTo(actual, Arrays.asList(expected));
+    }
+
+    public static void assertMatchTo(Iterable<MealTo> actual, Iterable<MealTo> expected) {
+        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
+    }
+
+
 }
