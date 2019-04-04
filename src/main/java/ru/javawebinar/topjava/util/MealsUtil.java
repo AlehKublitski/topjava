@@ -45,8 +45,4 @@ public class MealsUtil {
     public static MealTo createWithExcess(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
-
-    public static List<Meal> getMealsFromMealTo(List<MealTo> list) {
-        return list.stream().map(meal -> new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories())).collect(toList());
-    }
 }
