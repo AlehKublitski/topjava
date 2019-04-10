@@ -48,4 +48,9 @@ public abstract class AbstractUserController {
         log.info("getByEmail {}", email);
         return service.getByEmail(email);
     }
+
+    public void reverseEnabled(int id, boolean enabled) {
+        log.info("checked {} to {}", id, enabled);
+        service.reverseEnabled(id, enabled);
+    }
 }

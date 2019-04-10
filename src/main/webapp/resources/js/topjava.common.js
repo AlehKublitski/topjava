@@ -1,13 +1,28 @@
-let context, form;
+let context, form, filter;
 
 function makeEditable(ctx) {
     context = ctx;
     form = $('#detailsForm');
+    filter = false;
     $(".delete").click(function () {
         if (confirm('Are you sure?')) {
-            deleteRow($(this).attr("id"));
+            $(this).onclick();
+            //deleteRow($(this).closest("tr").attr("id"));
+            //deleteRow($(this).attr("id"));
         }
     });
+
+    $("input[type = 'checkbox']").click(function () {
+        var enabled = $(this).is(':checked');
+        if (confirm('Are you sure change status?')) {
+            checkedUser($(this).closest("tr").attr("id"), enabled);
+        } else {
+            successNoty("Отмена");
+            if (enabled) $(this).prop('checked', false);
+            else $(this).prop('checked', true);
+        }
+    });
+
 
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(jqXHR);
@@ -33,12 +48,17 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-    $.get(context.ajaxUrl, function (data) {
-        context.datatableApi.clear().rows.add(data).draw();
-    });
+    if (filter) {
+        updateFilteredTable();
+    } else {
+        $.get(context.ajaxUrl, function (data) {
+            context.datatableApi.clear().rows.add(data).draw();
+        });
+    }
 }
 
 function save() {
+
     $.ajax({
         type: "POST",
         url: context.ajaxUrl,

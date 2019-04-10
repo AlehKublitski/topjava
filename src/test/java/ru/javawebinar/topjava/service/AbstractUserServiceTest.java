@@ -89,4 +89,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
     }
+
+    @Test
+    void reverseEnabled() throws Exception {
+        service.reverseEnabled(ADMIN_ID, false);
+        User actualDisabled = service.get(ADMIN_ID);
+        service.reverseEnabled(ADMIN_ID, true);
+        User actualEnabled = service.get(ADMIN_ID);
+        assertMatch(actualEnabled, ADMIN);
+        ADMIN.setEnabled(false);
+        assertMatch(actualDisabled, ADMIN);
+    }
 }
