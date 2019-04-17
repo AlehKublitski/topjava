@@ -20,8 +20,7 @@ public class AdminUIController extends AbstractUserController {
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getAll() {
-        return super.getAll();
-    }
+        return super.getAll();}
 
     @Override
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -30,6 +30,7 @@ public class RootController {
 
     @GetMapping("/meals")
     public String meals(Model model) {
+        System.out.println("Руут контроллер заработал!!!!!");
         model.addAttribute("meals",
                 MealsUtil.getWithExcess(mealService.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay()));
         return "meals";
