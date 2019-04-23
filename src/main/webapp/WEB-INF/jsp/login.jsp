@@ -72,7 +72,7 @@
         setCredentials(username, password);
         $("#login_form").submit();
     }
-    function setCrede`ntials(username, password) {
+    function setCredentials(username, password) {
         $('input[name="username"]').val(username);
         $('input[name="password"]').val(password);
     }
