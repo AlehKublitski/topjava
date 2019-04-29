@@ -154,6 +154,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -165,16 +166,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     void testCreateNotValidMail() throws Exception {
         User expected = new User(null, "NewUser", "admin@gmail.com", "newPass", 2300, Role.ROLE_USER);
-
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(jsonWithPassword(expected, "newPass")))
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
-        User returned = readFromJson(action, User.class);
+       /* User returned = readFromJson(action, User.class);
         System.out.println(returned);
         expected.setId(returned.getId());
         System.out.println(expected);
@@ -182,7 +183,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         System.out.println(userService.get(100010));
         System.out.println(userService.get(ADMIN_ID));
         //assertMatch(returned, expected);
-        assertMatch(userService.getAll(), ADMIN, expected, USER);
+        assertMatch(userService.getAll(), ADMIN, expected, USER);*/
 
        //List<User> list = userService.getAll();
         //list.forEach(System.out::println);

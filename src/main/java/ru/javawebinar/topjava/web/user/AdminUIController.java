@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +43,15 @@ public class AdminUIController extends AbstractUserController {
         if(result.hasErrors()) {
             throw new IllegalRequestDataException("Вы ввели неверные данные для пользователя");
         }
-        if (userTo.isNew()) {
-            super.create(UserUtil.createNewFromTo(userTo));
-        } else {
-            super.update(userTo, userTo.getId());
+        try {
+            if (userTo.isNew()) {
+                super.create(UserUtil.createNewFromTo(userTo));
+            } else {
+                super.update(userTo, userTo.getId());
+            }
+        }
+        catch (DataIntegrityViolationException e){
+            throw new DataIntegrityViolationException("Данный e-mail уже зарегистрирован");
         }
     }
 

@@ -39,11 +39,17 @@ public class AdminRestController extends AbstractUserController {
         if(result.hasErrors()) {
             throw new IllegalRequestDataException("Вы ввели неверные данные для создания REST пользователя");
         }
-        User created = super.create(user);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        try {
+            User created = super.create(user);
+            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path(REST_URL + "/{id}")
+                    .buildAndExpand(created.getId()).toUri();
+            return ResponseEntity.created(uriOfNewResource).body(created);
+        }
+        catch (DataIntegrityViolationException e){
+            throw new DataIntegrityViolationException("Данный e-mail уже зарегистрирован");
+        }
+
     }
 
     @Override
